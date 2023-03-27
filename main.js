@@ -18,11 +18,46 @@ const getWeather = () => {
     axios.get(URL).then(res => {
         const temp = res.data.main.temp
         const hum = res.data.main.humidity
+        const status = Object.assign({}, ...res.data.weather)
 
+        console.log(status.id);
+        photo.setAttribute('src', './img/cloud.png')
+        
         cityName.textContent = res.data.name
         temperature.textContent = Math.floor(temp) + '℃'
         humidity.textContent = hum + '%'
+        weather.textContent = status.main
+
+        warning.textContent = ''
+        input.value = ''
+
+        if (status.id >= 200 && status.id < 300) {
+            photo.setAttribute('src', './img/thunderstorm.png')
+        } else if (status.id >= 300 && status.id < 400) {
+            photo.setAttribute('src', './img/drizzle.png')
+        } else if (status.id >= 500 && status.id < 600) {
+            photo.setAttribute('src', './img/rain.png')
+        } else if (status.id >= 600 && status.id < 700) {
+            photo.setAttribute('src', './img/ice.png')
+        } else if (status.id >= 700 && status.id < 800) {
+            photo.setAttribute('src', './img/fog.png')
+        } else if (status.id === 800) {
+            photo.setAttribute('src', './img/sun.png')
+        } else if (status.id > 800 && status.id < 900) {
+            photo.setAttribute('src', './img/cloud.png')
+        } else {
+            photo.setAttribute('src', './unknown.png')
+        }
     })
+    .catch(() => (warning.textContent = 'Wpisz poprawną nazwę miasta!'))
 }
 
+const enterCheck = (e) => {
+    if(e.key === 'Enter') {
+        getWeather()
+    }
+}
+
+input.addEventListener('keyup', enterCheck)
+button.addEventListener('click', getWeather)
 getWeather()
